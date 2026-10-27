@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; font-src 'self'; media-src 'self' data: blob:; connect-src 'self' data: blob:; worker-src 'self' blob:; manifest-src 'self'; form-action 'none'; base-uri 'none'; object-src 'none'">
+<meta name="referrer" content="no-referrer">
+<title>Passport Photo Maker — Free 2x2, 35x45, 4x6 Print Sheets | S3eidat Tools</title>
+<meta name="description" content="Make passport and ID photos at home: US 2x2 in, UK/EU 35x45 mm, Jordan and Saudi 4x6 cm, Canada, India, China. Head-size guides, 300 DPI export and a print sheet. Free and private.">
+<meta property="og:title" content="Passport Photo Maker — free, private, print-ready">
+<meta property="og:description" content="Fit your photo to the official size with guides, then print a sheet of copies. Runs 100% in your browser.">
+<link rel="icon" href="kit/icon.svg" type="image/svg+xml">
+<link rel="stylesheet" href="kit/kit.css">
+<link rel="stylesheet" href="app.css">
+<script src="kit/kit.js"></script>
+<!--s3:seo-->
+<link rel="canonical" href="https://s3eidat.github.io/passport-photo/">
+<link rel="manifest" href="manifest.webmanifest">
+<meta name="theme-color" content="#0d0f12">
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="S3eidat Tools">
+<meta property="og:url" content="https://s3eidat.github.io/passport-photo/">
+<meta property="og:image" content="https://s3eidat.github.io/passport-photo/screenshot.png">
+<meta property="og:image:width" content="1280"><meta property="og:image:height" content="800">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Passport Photo — Passport and ID photos, print-ready">
+<meta name="twitter:description" content="Passport and ID photos, print-ready. Free, private and runs 100% in your browser: no sign-up, no uploads.">
+<meta name="twitter:image" content="https://s3eidat.github.io/passport-photo/screenshot.png">
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "WebApplication", "name": "Passport Photo", "url": "https://s3eidat.github.io/passport-photo/", "description": "Passport and ID photos, print-ready. Free, private and runs 100% in your browser: no sign-up, no uploads.", "applicationCategory": "UtilitiesApplication", "operatingSystem": "Any (web browser)", "isAccessibleForFree": true, "offers": {"@type": "Offer", "price": "0", "priceCurrency": "USD"}, "image": "https://s3eidat.github.io/passport-photo/screenshot.png", "author": {"@type": "Person", "name": "s3eidat", "url": "https://github.com/s3eidat"}}</script>
+<!--/s3:seo-->
+</head>
+<body data-tool="passport-photo">
+<main class="s3-main">
+  <section class="s3-hero no-print">
+    <h1>Passport Photo</h1>
+    <p>Make a passport or ID photo from any picture. Pick the country, line your face up with the guides, then download a 300 DPI photo or a print sheet with cut marks. Your photo never leaves your browser.</p>
+  </section>
+
+  <div class="pp-grid no-print">
+    <section class="card stack">
+      <div class="row between">
+        <h2>Fit your photo</h2>
+        <div class="row">
+          <button class="btn ghost small" id="sample">Sample</button>
+          <label class="btn ghost small" id="open"><svg class="i"><use href="#i-image"/></svg>Open photo<input type="file" accept="image/*" hidden></label>
+        </div>
+      </div>
+      <div class="pp-stage checker" id="stageWrap">
+        <canvas id="stage" tabindex="0" aria-label="Photo framing area. Drag to move, scroll or use + and - to zoom, arrow keys to nudge."></canvas>
+        <label class="drop pp-drop" id="drop">
+          <input type="file" accept="image/*" hidden>
+          <svg class="i"><use href="#i-upload"/></svg>
+          <b>Drop a photo here</b>
+          <span class="faint">or click to choose · face the camera, plain light background</span>
+        </label>
+      </div>
+      <div class="pp-legend faint" id="legend">
+        <span><i class="pp-key crown"></i>Top of head</span>
+        <span><i class="pp-key chin"></i>Chin in this band</span>
+        <span id="eyeKey"><i class="pp-key eyes"></i>Eyes in this band</span>
+      </div>
+      <div class="grid-2 pp-ctl">
+        <label class="field"><span class="row between"><span>Zoom</span><output id="zoomV" class="mono">100%</output></span>
+          <input type="range" id="zoom" min="100" max="600" step="1" value="100"></label>
+        <label class="field"><span class="row between"><span>Straighten</span><output id="rotV" class="mono">0°</output></span>
+          <input type="range" id="rot" min="-20" max="20" step="0.5" value="0"></label>
+        <label class="field"><span class="row between"><span>Brightness</span><output id="briV" class="mono">0</output></span>
+          <input type="range" id="bri" min="-40" max="40" step="1" value="0"></label>
+        <label class="field"><span class="row between"><span>Contrast</span><output id="conV" class="mono">0</output></span>
+          <input type="range" id="con" min="-40" max="40" step="1" value="0"></label>
+      </div>
+      <div class="row">
+        <button class="btn small" id="turn"><svg class="i"><use href="#i-refresh"/></svg>Rotate 90°</button>
+        <button class="btn small" id="reset">Reset framing</button>
+        <span class="grow"></span>
+        <span class="faint pp-tip">Drag to move · scroll or pinch to zoom</span>
+      </div>
+    </section>
+
+    <section class="card stack">
+      <label class="field">Photo size
+        <select class="select" id="spec"></select>
+      </label>
+      <div class="grid-2" id="custom" hidden>
+        <label class="field">Width (mm)<input class="input" type="number" id="cw" min="10" max="200" step="0.5" value="35"></label>
+        <label class="field">Height (mm)<input class="input" type="number" id="ch" min="10" max="200" step="0.5" value="45"></label>
+        <label class="field">Head min (mm)<input class="input" type="number" id="chmin" min="5" max="190" step="0.5" value="32"></label>
+        <label class="field">Head max (mm)<input class="input" type="number" id="chmax" min="5" max="190" step="0.5" value="36"></label>
+      </div>
+      <p class="pp-rule" id="rule"></p>
+      <div class="row pp-facts" id="specStats"></div>
+
+      <div class="row">
+        <button class="btn primary" id="dlPhoto" disabled><svg class="i"><use href="#i-download"/></svg>Photo (JPG, 300 DPI)</button>
+      </div>
+
+      <h2 class="pp-h">Print sheet</h2>
+      <div class="grid-2">
+        <label class="field">Paper
+          <select class="select" id="paper">
+            <option value="4x6">4×6 in (photo print)</option>
+            <option value="10x15">10×15 cm (photo print)</option>
+            <option value="a4">A4 (210×297 mm)</option>
+            <option value="letter">US Letter (8.5×11 in)</option>
+          </select>
+        </label>
+        <label class="field">Space between copies
+          <select class="select" id="gap">
+            <option value="0">None</option>
+            <option value="2">2 mm</option>
+            <option value="4">4 mm</option>
+          </select>
+        </label>
+      </div>
+      <figure class="pp-sheet checker" id="sheetFig">
+        <img id="sheetImg" alt="Print sheet preview">
+        <figcaption class="faint" id="sheetCap">Open a photo to build the sheet.</figcaption>
+      </figure>
+      <div class="row">
+        <button class="btn" id="dlSheet" disabled><svg class="i"><use href="#i-download"/></svg>Sheet (JPG)</button>
+        <button class="btn" id="print" disabled><svg class="i"><use href="#i-file"/></svg>Print sheet</button>
+      </div>
+      <p class="faint pp-note">Print at <b>100% / actual size</b> (turn off "fit to page"). Rules change: check your country's current official requirements (background colour, glasses, expression, how recent the photo must be) before you submit.</p>
+    </section>
+  </div>
+</main>
+<div class="pp-print" id="printArea"><img id="printImg" alt=""></div>
+<script src="app.js"></script>
+</body>
+</html>
